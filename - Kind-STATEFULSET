@@ -1,0 +1,44 @@
+A StatefulSet in Kubernetes is a controller used for managing stateful applications,
+which require unique, persistent identifiers and stable storage
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+   name: db
+spec:
+   replicas: 3
+   selector:
+       matchLabels:
+            app: mydb
+   serviceName: "dbservice"
+   template:
+     metadata:
+         labels:
+            app: mydb
+     spec:
+        containers:
+          - name: mydbcontainer
+            image: mysql
+            env:
+              - name: MYSQL_ROOT_PASSWORD
+                valueFrom:
+                   configMapKeyRef:
+                       name: mysql-config
+                       key: mysql-password
+            ports:
+              - containerPort: 3306
+   volumeClaimTemplates:
+         - metadata:
+             name: dbb
+           spec:
+             accessModes: ["ReadWriteMany"]
+             resources:
+                requests:
+                   storage: 1Gi
+                limits:
+                  storage: 1Gi
+
+1.serviceName: Specifies the headless service name for DNS resolution.
+2.replicas: The number of pods.
+3.volumeClaimTemplates: Ensures each pod gets its own PersistentVolume.
+4.volumeMounts: Mounts the persistent storage into the container
