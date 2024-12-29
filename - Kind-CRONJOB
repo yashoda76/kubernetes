@@ -1,0 +1,41 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+   name: hellojob
+spec:
+  schedule: "*/5 * * * *"
+  jobTemplate:
+   spec:
+    template:
+      metadata:
+         labels:
+           app: hello
+      spec:
+        containers:
+          - name: hello
+            image: busybox
+            command: ["echo","hello,k8s"]
+        restartPolicy: Never
+
+1.completions: The number of successful pod completions required for the job to be considered successful.
+2.parallelism: The maximum number of pods to run in parallel.
+3.restartPolicy: Set to Never because once the task completes, the pod should not restart.
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+   name: hellojob
+spec:
+   completions: 5
+   parallelism: 2
+   template:
+      metadata:
+         labels:
+           app: hello
+      spec:
+        containers:
+          - name: hello
+            image: busybox
+            command: ["echo","hello,k8s"]
+        restartPolicy: Never
+   backoffLimit: 4
