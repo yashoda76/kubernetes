@@ -1,0 +1,21 @@
+job: A Job in Kubernetes runs a pod or a set of pods to completion, 
+     meaning it performs a specific task until it succeeds. Once the task is completed successfully,
+     the Job stops and the pod is terminated
+
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+   name: hellojob
+spec:
+   template:
+      metadata:
+         labels:
+           app: hello
+      spec:
+        containers:
+          - name: hello
+            image: busybox
+            command: ["echo","hello,k8s"]
+        restartPolicy: Never
+   backoffLimit: 4
